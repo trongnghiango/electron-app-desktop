@@ -1,7 +1,7 @@
 /** @type {import('tailwindcss').Config} */
 
 const {join} = require('path');
-const pathContent = join(__dirname, 'src/**/*.{ts,tsx}' );
+const pathContent = join(__dirname, 'src/**/*.{ts,tsx}');
 module.exports = {
   content: [
     pathContent,
@@ -11,4 +11,4 @@ module.exports = {
     extend: {},
   },
   plugins: [],
-}
+};

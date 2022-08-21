@@ -1,16 +1,9 @@
-import {app, 
-  BrowserWindow,
-  dialog,
-  ipcMain,
-  IpcMainEvent,
-
-} from 'electron';
+import {app, BrowserWindow, dialog, ipcMain, IpcMainEvent} from 'electron';
 import {join, basename} from 'path';
 import {URL} from 'url';
 import * as fs from 'fs';
 
-import {renameAndChangeFileList} from '../../utils/fileHandler'
-
+import {renameAndChangeFileList} from '../../utils/fileHandler';
 
 async function createWindow() {
   const mainWindow = new BrowserWindow({
@@ -37,7 +30,7 @@ async function createWindow() {
   //     options,
   //     additionalFeatures
   //   ) => {
-      
+
   //     if (frameName === "modal") {
   //       // open window as modal
   //       Object.assign(options, {
@@ -53,32 +46,26 @@ async function createWindow() {
   //   }
   // );
 
-  ipcMain.on("showFolderDialog", (event: IpcMainEvent) => {
-    const options: Electron.OpenDialogOptions = { properties: ["openDirectory" ], defaultPath: ''};
-    let fileSelectionPromise = dialog.showOpenDialog(
-      options
-    );
+  ipcMain.on('showFolderDialog', (event: IpcMainEvent) => {
+    const options: Electron.OpenDialogOptions = {properties: ['openDirectory'], defaultPath: ''};
+    let fileSelectionPromise = dialog.showOpenDialog(options);
     fileSelectionPromise.then(async function (obj) {
       //event.sender.send("selectedfolders", obj.filePaths);
-      if (obj) mainWindow.webContents.send("openDir",obj.filePaths[0])
+      if (obj) mainWindow.webContents.send('openDir', obj.filePaths[0]);
 
-      const result = await renameAndChangeFileList(obj.filePaths[0], `${obj.filePaths[0]}/`).catch((error:any) => console.error(error));
-      
+      const result = await renameAndChangeFileList(obj.filePaths[0], `${obj.filePaths[0]}/`).catch(
+        (error: any) => console.error(error),
+      );
+
       // .then(
-      //   (files: any) => event.sender.send('files_list', files) 
+      //   (files: any) => event.sender.send('files_list', files)
       // );
-      result.every((file:any, index:number) => {
-         let stats: fs.Stats = fs.statSync(file);
-          event.sender.send(
-            "fileslist",
-            basename(file),
-            stats
-          );
-          return true;
-
-      })
+      result.every((file: any, index: number) => {
+        let stats: fs.Stats = fs.statSync(file);
+        event.sender.send('fileslist', basename(file), stats);
+        return true;
+      });
     });
-    
   });
 
   /**
